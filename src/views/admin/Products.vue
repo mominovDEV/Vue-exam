@@ -81,11 +81,11 @@ const deleteItem = (_id) => {
 
 const createItem = () => {
   products_modal.value.openModal();
-  console.log(products_modal.value.openModal());
+  console.log(products_modal.value);
 };
 
-const editItem = (items) => {
-  console.log(items._id);
+const editItem = (_id) => {
+  console.log(_id);
   products_modal.value.openModal(_id);
 };
 

@@ -1,6 +1,6 @@
 <template>
   <AppModal v-model="dialog">
-    <pre>{{ forms }}</pre>
+    <!-- <pre>{{ forms }}</pre> -->
     <h1 v-if="!forms._id">Add Product</h1>
     <h1 v-else>Edit Product</h1>
     <Form>
