@@ -1,17 +1,31 @@
 <template>
-  <div class="container-fluid">
+  <div class="products">
+    <products ref="products_modal" />
+    <div class="btn-first mb-3">
+      <button @click="createItem" class="btn btn-success">Create Product</button>
+      <button @click="logOut" class="btn btn-warning">LogOut</button>
+    </div>
     <div class="row">
-      <div class="col-3 my-3" v-for="(item, index) in products" :key="index">
-        <div class="card text-center">
-          <div class="card-body">
-            <img :src="item.image" alt="img" class="image" />
-          </div>
+      <div class="col-3 my-2" v-for="(item, index) in items" :key="index">
+        <!-- <pre>{{ item }}</pre> -->
+        <div class="card">
           <div class="card-header">
-            <h4>{{ item.title }}</h4>
+            <h1 class="text-center fs-6">{{ item?.name }}</h1>
           </div>
-          <div class="card-body text-center">
-            <button @click="viewDetails(item.id)" class="btn btn-success">
-              View details
+          <div class="card-body">
+            <h1 class="fs-3">{{ item?.brand }}</h1>
+            <h1 class="fs-3">{{ item?.group }}</h1>
+            <p>{{ item?.price }}</p>
+            <p>{{ item?.arrival_price }}</p>
+            <p>{{ item?.selling_price }}</p>
+            <p>{{ item?.description }}</p>
+          </div>
+          <div class="card-footer">
+            <button class="btn btn-info" @click="editItem(item)">
+              Edit
+            </button>
+            <button class="btn btn-danger" @click="deleteItem(item?._id)">
+              Delete
             </button>
           </div>
         </div>
@@ -22,27 +36,78 @@
 
 <script setup>
 import { ref } from "vue";
-import axios from "axios";
-import { useRouter } from "vue-router";
-const router = useRouter();
-const viewDetails = (id) => {
-  router.push({ name: "single_product", params: { id: id } });
+import http from "../../components/plugins/axios";
+import products from "../../components/pages/products.vue";
+import { createToast } from "mosha-vue-toastify";
+
+const toastdelete = () => {
+  createToast("Successfully deleted! (Reloading...)", {
+    position: "top-right",
+    type: "success",
+    transition: "bounce",
+  });
 };
 
-const products = ref([]);
-const getProducts = () => {
-  axios
-    .get("https://fakestoreapi.com/products")
-    .then((res) => (products.value = res.data))
-    .catch((err) => console.log(err));
+const items = ref([]);
+const products_modal = ref();
+const getCountries = () => {
+  http
+    .get("products")
+    .then((res) => {
+      console.log(res);
+      items.value = res.data.products;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
-getProducts();
+const deleteItem = (_id) => {
+  http
+    .delete(`products/${_id}`)
+    .then((res) => {
+      console.log(res);
+      if (res.status === 200) {
+        toastdelete();
+        setTimeout(() => {
+          location.reload();
+        }, 3000);
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+const createItem = () => {
+  products_modal.value.openModal();
+  console.log(products_modal.value.openModal());
+};
+
+const editItem = (items) => {
+  console.log(items._id);
+  products_modal.value.openModal(_id);
+};
+
+const logOut = () => {
+  localStorage.removeItem("token");
+  location.reload();
+};
+getCountries();
 </script>
 
 <style lang="scss" scoped>
-.image {
-  width: 90%;
-  height: 250px;
+.btn-first {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+
+.card-footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 10px;
 }
 </style>

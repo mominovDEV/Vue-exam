@@ -30,8 +30,13 @@ const props = defineProps({
   gap: 15px;
   .sidebar-link {
     text-decoration: none;
+    background-color: #fff;
     color: black;
     font-size: 30px;
+    display: flex;
+    text-align: center;
   }
+
+
 }
 </style>

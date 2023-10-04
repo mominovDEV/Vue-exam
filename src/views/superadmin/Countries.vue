@@ -7,18 +7,21 @@
     </div>
     <div class="row">
       <div class="col-3 my-2" v-for="(item, index) in items" :key="index">
+        <!-- <pre>{{ item }}</pre> -->
         <div class="card">
           <div class="card-header">
-            <h1 class="text-center fs-6">{{ item[0].name }}</h1>
+            <h1 class="text-center fs-6">{{ item?.name }}</h1>
           </div>
           <div class="card-body">
-            <h1 class="fs-3">{{ item[0].age }}</h1>
-            <h1 class="fs-3">{{ item[0].surname }}</h1>
-            <p>{{ item[0].is_diplom }}</p>
+            <h1 class="fs-3">{{ item?.age }}</h1>
+            <h1 class="fs-3">{{ item?.surname }}</h1>
+            <p>{{ item?.is_diplom }}</p>
           </div>
           <div class="card-footer">
-            <button class="btn btn-info" @click="editItem(item)">Edit</button>
-            <button class="btn btn-danger" @click="deleteItem(item._id)">
+            <button class="btn btn-info" @click="editItem(item)">
+              Edit
+            </button>
+            <button class="btn btn-danger" @click="deleteItem(item?._id)">
               Delete
             </button>
           </div>
@@ -48,9 +51,7 @@ const getCountries = () => {
   http
     .get("users")
     .then((res) => {
-      res.data = res.data;
-      items.value = res.data;
-      console.log(res.data);
+      items.value = res.data.users;
     })
     .catch((err) => {
       console.log(err);
@@ -59,7 +60,7 @@ const getCountries = () => {
 
 const deleteItem = (_id) => {
   http
-    .delete(`/user/delete/${_id}`)
+    .delete(`users/${_id}`)
     .then((res) => {
       console.log(res);
       if (res.status === 200) {
@@ -76,10 +77,12 @@ const deleteItem = (_id) => {
 
 const createItem = () => {
   countries_modal.value.openModal();
+  console.log(countries_modal.value.openModal());
 };
 
-const editItem = (item) => {
-  countries_modal.value.openModal(item);
+const editItem = (_id) => {
+  console.log(_id);
+  countries_modal.value.openModal(_id);
 };
 
 const logOut = () => {
